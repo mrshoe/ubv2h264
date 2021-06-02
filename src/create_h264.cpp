@@ -39,7 +39,7 @@ void process_file(string ubvinfo_path, string filename, uint64_t start_tstamp,
 {
     cout << "process_file: " << ubvinfo_path << " " << filename << endl;
     // Anecdotally, keyframes were all <500KB
-    static constexpr size_t buf_size = 10 * 1024 * 1024;
+    static constexpr int32_t buf_size = 10 * 1024 * 1024;
     static char buffer[buf_size];
     // The video payloads in the ubv file consist of a bunch of (4 byte) length-prefixed
     // h264 frames. A valid h264 stream consists of sentinel-prefixed h264 frames
