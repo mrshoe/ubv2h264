@@ -16,9 +16,11 @@ ubv filenames), and the day and time range you wish to extract.
 ## Building
 The build requires the aarch64-linux-gnu toolchain. On Ubuntu,
 this command should install the toolchain.
+
     # apt install g++-aarch64-linux-gnu
 
 After that, simply running `make` will build the ubv2h264 binary.
+
     $ make
 
 The binary can then be copied to your Protect server and run.
@@ -32,9 +34,11 @@ Extracting 2 hours from camera E063DA005DDC on 4/8/2021, starting at 10:30am.
     E063DA005DDC 2021 04 08 1617903000000 1617910200000
 
 Putting the resulting h264 stream into an mp4 container:
+
     $ ffmpeg -i video.h264 -c:v copy video.mp4
 
 Creating a 50x speed time lapse mp4 from the h264 stream:
+
     $ ffmpeg -i video.h264 -filter:v "setpts=0.02*PTS" video.mp4
 
 The print_args.py utility can be used to generate the date and time
