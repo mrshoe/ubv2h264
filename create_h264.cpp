@@ -17,22 +17,6 @@ using std::getline;
 using std::cout;
 using std::endl;
 
-/*
- * TODO: put this in a README.md
- * create_h264: A utility for extracting h264 video from ubv files
- * ---------------------------------------------------------------
- * Unifi's ubv files contain multiple video and audio tracks, along
- * with some inline metadata. The ubnt_ubvinfo binary can parse ubv
- * files and print out information about their contents. This utility
- * calls ubnt_ubvinfo to find video payloads and extract them into a
- * file that contains a valid h264 stream. This stream can then easily
- * be processed by e.g. ffmpeg to e.g. put it in an mp4 container.
- * The location of the ubnt_ubvinfo binary can change, so this utility
- * takes the path to ubnt_ubvinfo as an argument.
- * Other arguments include the camera ID (which is the prefix on the
- * ubv filenames), and the day and time range you wish to extract.
- */
-
 vector<string> find_files(string video_dir, string camera_id)
 {
     vector<string> result;
@@ -123,8 +107,8 @@ int main(int argc, char** argv)
         cout << "\tyear: ex. 2021" << endl;
         cout << "\tmonth: 01-12" << endl;
         cout << "\tday: 01-31" << endl;
-        cout << "\tstart-timestamp: milliseconds since 1970, UTC" << endl;
-        cout << "\tend-timestamp: milliseconds since 1970, UTC" << endl;
+        cout << "\tstart-timestamp: milliseconds since 1970, local time" << endl;
+        cout << "\tend-timestamp: milliseconds since 1970, local time" << endl;
         return 1;
     }
 
