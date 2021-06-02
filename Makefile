@@ -2,7 +2,7 @@ CXX=aarch64-linux-gnu-g++
 STRIP=aarch64-linux-gnu-strip
 CFLAGS=-Wall -Wextra -Werror -ansi -pedantic -std=c++2a -Os -ffunction-sections -fdata-sections
 LDFLAGS=-s -Wl,--gc-sections
-EXEC=create_h264
+EXEC=ubv2h264
 SRC=$(wildcard *.cpp)
 OBJ=$(SRC:.cpp=.o)
 

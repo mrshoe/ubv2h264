@@ -2,7 +2,7 @@ import datetime
 import time
 
 #
-# Simple utility for printing the last 5 arguments for create_h264,
+# Simple utility for printing the last 5 arguments for ubv2h264,
 # which represent the date and the time range to extract.
 #
 # Edit the last line of this file to change the date/time
