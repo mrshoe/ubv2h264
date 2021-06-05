@@ -17,19 +17,50 @@ using std::getline;
 using std::cout;
 using std::endl;
 
-vector<string> find_files(string video_dir, string camera_id)
+vector<string> find_files(string video_dir, string camera_id, uint64_t start_tstamp,
+        uint64_t end_tstamp)
 {
     vector<string> result;
+    // The "<camera-id>_0_rotating_<timestamp>.ubv" files are full resolution
+    // The "<camera-id>_2_rotating_<timestamp>.ubv" files are lower resolution
+    // first grab all full resolution files for the camera and sort them
     DIR* dir = opendir(video_dir.c_str());
     while (auto ent = readdir(dir))
     {
         string fn = ent->d_name;
-        // The "<camera-id>_0_rotating_<timestamp>.ubv" files are full resolution
-        // The "<camera-id>_2_rotating_<timestamp>.ubv" files are lower resolution
         if (fn.find(camera_id + "_0_") != string::npos)
         {
             result.push_back(fn);
         }
+    }
+    std::sort(result.begin(), result.end());
+
+    // now filter them out based on timestamps
+    char scan_fmt[200];
+    sprintf(scan_fmt, "%s_0_rotating_%%s.ubv", camera_id.c_str());
+    auto get_tstamp = [&](string fn) -> uint64_t {
+        char tstamp_str[50];
+        int matches = sscanf(fn.c_str(), scan_fmt, tstamp_str);
+        if (matches != 1)
+        {
+            cout << "Error: bad filename format" << endl;
+            return 0;
+        }
+        return std::stol(tstamp_str);
+    };
+    auto first = std::find_if(result.begin(), result.end(), [&](auto s) {
+        return get_tstamp(s) >= start_tstamp;
+    });
+    if (first != result.begin())
+    {
+        result.erase(result.begin(), first - 1);
+    }
+    auto last = std::find_if(result.begin(), result.end(), [&](auto s) {
+        return get_tstamp(s) > end_tstamp;
+    });
+    if (last != result.end())
+    {
+        result.erase(last, result.end());
     }
     return result;
 }
@@ -89,10 +120,9 @@ void process_file(string ubvinfo_path, string filename, uint64_t start_tstamp,
             }
             wrote_keyframe = true;
             frames_written++;
-            cout << type << ", " << offset << ", " << size << " " << epoch_time << " " << frames_written << endl;
+            // cout << type << ", " << offset << ", " << size << " " << epoch_time << " " << frames_written << endl;
         }
     }
-    cout << "Waiting to terminate..." << endl;
     cout << "Status: " << ubvinfo.wait() << endl;
 }
 
@@ -114,12 +144,10 @@ int main(int argc, char** argv)
 
     string video_dir = "/mnt/data_ext/unifi-os/unifi-protect/video/";
     video_dir = video_dir + argv[3] + "/" + argv[4] + "/" + argv[5] + "/";
-    cout << video_dir.c_str() << endl;
-    auto files = find_files(video_dir, argv[2]);
-    std::sort(files.begin(), files.end());
-
     uint64_t start_tstamp = std::stol(argv[6]);
     uint64_t end_tstamp = std::stol(argv[7]);
+    auto files = find_files(video_dir, argv[2], start_tstamp, end_tstamp);
+
     std::ofstream output{"/mnt/data_ext/shoe/video.h264"};
     for (auto& f : files)
     {
