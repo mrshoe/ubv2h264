@@ -142,13 +142,15 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    string camera_id{argv[2]};
     string video_dir = "/mnt/data_ext/unifi-os/unifi-protect/video/";
     video_dir = video_dir + argv[3] + "/" + argv[4] + "/" + argv[5] + "/";
     uint64_t start_tstamp = std::stol(argv[6]);
     uint64_t end_tstamp = std::stol(argv[7]);
     auto files = find_files(video_dir, argv[2], start_tstamp, end_tstamp);
 
-    std::ofstream output{"/mnt/data_ext/shoe/video.h264"};
+    string outfile_path = "/mnt/data_ext/shoe/" + camera_id + ".h264";
+    std::ofstream output{outfile_path};
     for (auto& f : files)
     {
         process_file(argv[1], video_dir + f, start_tstamp, end_tstamp, output);
